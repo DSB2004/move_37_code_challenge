@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Users {
+  id String @id @default(uuid())
+
+  email String @unique
+  username String? 
+  bio   String?  @db.Text
+  pools Polls[] @relation("pollOfUser")
+  reply   Replies[] @relation("replyOfUser")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Polls{
+
+  id String @id @default(uuid())
+  ownerId String 
+  owner Users  @relation("pollOfUser",references: [id],fields: [ownerId])
+  question String
+  description String?
+  options PollOptions[] @relation("optionOfPoll")
+  reply   Replies[] @relation("replyOfPoll")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model PollOptions {
+  id String @id @default(uuid())
+  pollId String
+  poll Polls @relation("optionOfPoll" ,references: [id],fields: [pollId])
+  replies Replies[] @relation("reply")
+  option String 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+
+
+
+model Replies{
+  id String @id @default(uuid())
+
+  pollId String
+  userId String
+  optionId String
+
+  poll Polls @relation("replyOfPoll" ,references: [id],fields: [pollId])
+  user Users @relation("replyOfUser" ,references: [id],fields: [userId])
+  option PollOptions @relation("reply",references: [id],fields: [optionId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([pollId,userId])
+}
