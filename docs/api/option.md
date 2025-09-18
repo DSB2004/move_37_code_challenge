@@ -6,7 +6,7 @@ For local development: http://localhost:3000/option
 
 #### `POST /`
 
-Allow user to add new option to an existing pool
+Allow user to add new options to an existing pool
 
 **Request Body:**
 
