@@ -18,4 +18,4 @@ To get started with this project, follow the setup instructions in the respectiv
 
 - [`General`](./docs/general.md)
 - [`Setup Instruction`](./docs/setup/index.md)
-- ['API Documentation`](./docs/api/index.md)
+- [`API Documentation`](./docs/api/index.md)
