@@ -1,15 +1,21 @@
-# move_37_productions
+# Move 37 Code Challenge
 
-To install dependencies:
+- The **Voting Application** is a backend focus express based server application that allows users to maintain polls and allow option like sharing and voting on them.
+- It also provides seamless poll list management, Sharing option to other users via email, real time update on poll result and more features to simplify poll organisation and management.
 
-```bash
-bun install
-```
+---
 
-To run:
+## 🚀 Features
 
-```bash
-bun run index.ts
-```
+- Create, update, and delete poll
+- Send Poll invitations via email
+- Track poll responses in real-time
+- Scalable backend with secure API endpoints
 
-This project was created using `bun init` in bun v1.2.18. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## 🧾 Getting Started
+
+To get started with this project, follow the setup instructions in the respective folders:
+
+- [`General`](./docs/general.md)
+- [`Setup Instruction`](./docs/setup/index.md)
+- ['API Documentation`](./docs/api/index.md)

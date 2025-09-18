@@ -1,10 +1,8 @@
-"use server";
-
 import { createJWT, verifyJWT } from "../../utils/jwt.util";
 
 import { TokenType } from "../../types/auth";
 import { db } from "../../lib/db";
-import { VerifyDTO } from "../../dto/user.dto";
+import { VerifyDTO } from "../../dto/auth.dto";
 import z from "zod";
 export const verify = async (data: z.infer<typeof VerifyDTO>) => {
   const { authToken } = data;
@@ -13,8 +11,8 @@ export const verify = async (data: z.infer<typeof VerifyDTO>) => {
     const res = await verifyJWT<{ email: string; action: TokenType }>(
       authToken
     );
-
-    if (!res) {
+    console.log("[VERIFY] ", res);
+    if (!res || res === null) {
       return {
         status: 403,
         message: "Session expired or token is not valid",
@@ -43,6 +41,15 @@ export const verify = async (data: z.infer<typeof VerifyDTO>) => {
         message: "No account found",
       };
     }
+
+    await db.users.update({
+      where: {
+        email,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
 
     const accessToken = await createJWT({
       payload: { email: email, action: TokenType.ACCESS, id: user.id },

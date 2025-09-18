@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  output   = "../generated"
 }
 
 datasource db {
@@ -19,7 +19,12 @@ datasource db {
 model Users {
   id String @id @default(uuid())
 
+  // authentication
   email String @unique
+  passwordHash String @db.Text
+  isVerified Boolean @default(false)
+
+  // descriptive
   username String? 
   bio   String?  @db.Text
   pools Polls[] @relation("pollOfUser")
@@ -36,6 +41,7 @@ model Polls{
   owner Users  @relation("pollOfUser",references: [id],fields: [ownerId])
   question String
   description String?
+  isPublished Boolean @default(true)
   options PollOptions[] @relation("optionOfPoll")
   reply   Replies[] @relation("replyOfPoll")
   createdAt DateTime @default(now())

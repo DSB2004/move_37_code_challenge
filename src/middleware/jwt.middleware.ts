@@ -1,19 +1,20 @@
-import { ZodSchema } from "zod";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction, Request } from "express";
 import { verifyJWT, createJWT } from "../utils/jwt.util";
 import { DecodedToken, TokenType } from "../types/auth";
-import { UserRequest } from "../types/auth";
-export const jwt = async (
-  req: UserRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const headers = req.headers;
 
-  const accessToken = req.get("access-token");
-  const refreshToken = req.get("refresh-token");
+export const jwt = async (req: Request, res: Response, next: NextFunction) => {
+  const accessToken = req.headers["access-token"];
+  const refreshToken = req.headers["refresh-token"];
 
-  if (!accessToken || !refreshToken) {
+  if (
+    !accessToken ||
+    !refreshToken ||
+    typeof accessToken != "string" ||
+    typeof refreshToken != "string"
+  ) {
+    if (req.originalUrl.includes("/vote") && req.method === "GET") {
+      return next();
+    }
     return res.status(403).json({
       message: "Access or refresh token missing in headers",
     });
@@ -22,7 +23,7 @@ export const jwt = async (
   const isAccessValid = await verifyJWT<DecodedToken>(accessToken);
 
   if (isAccessValid) {
-    const { action } = isAccessValid;
+    const { action, id, email } = isAccessValid;
     if (action !== TokenType.ACCESS) {
       return res.status(403).json({
         message: "Invalid access token sent",
@@ -31,6 +32,7 @@ export const jwt = async (
 
     res.setHeader("access-token", accessToken);
     res.setHeader("refresh-token", refreshToken);
+    res.locals.user = { id, email, action };
     return next();
   }
 
@@ -62,7 +64,7 @@ export const jwt = async (
   res.setHeader("access-token", _accessToken);
   res.setHeader("refresh-token", _refreshToken);
 
-  req.user = { id, email, action };
+  res.locals.user = { id, email, action };
 
   return next();
 };

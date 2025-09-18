@@ -1,15 +1,15 @@
-"use server";
-
-import { createJWT } from "../../utils/jwt.util";
-import { DecodedToken, TokenType } from "../../types/auth";
+import { DecodedToken } from "../../types/auth";
 import { db } from "../../lib/db";
 import { AccountDTO } from "../../dto/user.dto";
 import z from "zod";
-export const account = async (
-  data: z.infer<typeof AccountDTO>,
-  user: DecodedToken
-) => {
-  const { email} = user;
+export const account = async ({
+  data,
+  user,
+}: {
+  data: z.infer<typeof AccountDTO>;
+  user: DecodedToken;
+}) => {
+  const { email } = user;
   const { username, bio } = data;
 
   try {
